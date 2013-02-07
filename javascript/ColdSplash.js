@@ -48,14 +48,14 @@ function ColdSplash () {
                 img: snowFlakeImage,
                 velocity: {x:get_x_velocity(),y:get_y_velocity()},
                 position: get_start_position(),
-                rotation: get_rotation(),
-                rotationDirection: utill.randomrange(2) - 1,
-                rotationRate: 1
+                rotation: utill.randomRange(360) * 0.0174532925199432957,
+                rotationDirection: utill.randomRange(2) - 1,
+                rotationRate: 10
             };
             snowflakes.push(snowFlakeObject);
         };
+        console.log(snowflakes[0]);
 
-        console.log(snowflakes);
         timers.push(setInterval(update, ONE_FRAME_TIME));
         //timers.push(setTimeout(segue, 1000));
     }
@@ -69,19 +69,27 @@ function ColdSplash () {
         //draw all the snowflakes
         for (var i = 0; i < snowflakes.length; i++) {
             var snowflake = snowflakes[i];
-            context.drawImage(snowflakes[i].img, snowflake.position.x, snowflake.position.y);
             //update snowflakes position
-            snowflakes[i].position.x = snowflakes[i].position.x + snowflake.velocity.x;
-            snowflakes[i].position.y = snowflakes[i].position.y + snowflake.velocity.y;
+            snowflake.position.x = snowflake.position.x + snowflake.velocity.x;
+            snowflake.position.y = snowflake.position.y + snowflake.velocity.y;
+            //update snowflake rotation
+            snowflake.rotation += snowflake.rotationRate * 0.0174532925199432957;
 
+            //console.log(snowflake.rotation);
             //rotate the snowflake
+            // save old state
             context.save(); //push the context onto stack so we can restore after messing with the coordinate system
-            if (snowflake.rotation > 0) {
-            } else {
+            // translate so origin is where the snowflake is
 
-            };
+            context.translate(snowflake.position.x, snowflake.position.y);
+            // draw the image with itself centered on the origin
+            context.drawImage(snowflake.img, -snowflake.img.width/2, -snowflake.img.height/2);
+            // rotate it by requried amount
             context.rotate(snowflake.rotation);
+            console.log(snowflakes[0]);
+            // restore old state
             context.restore();
+
 
             //check if the snowflake has gone off the left side of the screen
             if ((snowflake.position.x) < (0 -snowflake.img.width)) {
@@ -101,7 +109,6 @@ function ColdSplash () {
     }
     // Moves onto the next scene
     function segue () {
-        console.log("segueing to main game");
         main();
     }
     initialize();
